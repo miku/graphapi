@@ -4,8 +4,10 @@ from flask import Flask
 import requests
 
 app = Flask(__name__)
+app.config['SPARQL_ENDPOINT'] = 'http://localhost:18890/sparql'
 
 QUERY = """
+
 CONSTRUCT {{ 
     <http://d-nb.info/gnd/{gnd}> <http://xmlns.com/foaf/0.1/depiction> ?c .
 
@@ -75,6 +77,7 @@ WHERE {{
         ?b <http://xmlns.com/foaf/0.1/depiction> ?c .
     }}
 }}
+
 """
 
 @app.route("/")
@@ -83,8 +86,10 @@ def hello():
 
 @app.route("/gnd/<gnd>")
 def q(gnd):
-    r = requests.get('http://localhost:18890/sparql', headers={'accept': 'application/json'}, params={'query': QUERY.format(gnd=gnd)})
+    r = requests.get(app.config['SPARQL_ENDPOINT'],
+                     headers={'accept': 'application/json'},
+                     params={'query': QUERY.format(gnd=gnd)})
     return "<pre>%s</pre>" % r.text
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
