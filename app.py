@@ -18,12 +18,12 @@ CONSTRUCT {{
     <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#born> ?h .
     <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#died> ?i .
 
-    <http://example.org/kg#diedIn> <rdfs:label> "gestorben in"@de . 
-    <http://example.org/kg#diedIn> <rdfs:label> "died in"@en . 
+    <http://example.org/kg#diedIn> <http://www.w3.org/2000/01/rdf-schema#label> "gestorben in"@de . 
+    <http://example.org/kg#diedIn> <http://www.w3.org/2000/01/rdf-schema#label> "died in"@en . 
 
-    <http://d-nb.info/gnd/{gnd}> <rdfs:label> ?j .
+    <http://d-nb.info/gnd/{gnd}> <http://www.w3.org/2000/01/rdf-schema#label> ?j .
     <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#cityCluster> ?k .
-    ?k <rdfs:label> ?klabel .
+    ?k <http://www.w3.org/2000/01/rdf-schema#label> ?klabel .
     ?k <http://xmlns.com/foaf/0.1/depiction> ?k_dbp .
 
     <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#profession> ?l .
