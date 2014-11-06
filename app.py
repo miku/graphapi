@@ -10,102 +10,95 @@ app.config['SPARQL_ENDPOINT'] = 'http://localhost:18890/sparql'
 cors = CORS(app)
 
 QUERY = """
+DEFINE input:same-as "yes"
+DEFINE input:inference <gndrules>
+
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX gnd: <http://d-nb.info/gnd/>
 
 CONSTRUCT {{ 
-    <http://d-nb.info/gnd/{gnd}> <http://xmlns.com/foaf/0.1/depiction> ?c .
+    gnd:{gnd} <http://xmlns.com/foaf/0.1/depiction> ?c .
 
-    <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#bornIn> ?e .
-    <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#diedIn> ?g .
+    gnd:{gnd} <http://example.org/kg#bornIn> ?e .
+    gnd:{gnd} <http://example.org/kg#diedIn> ?g .
 
-    <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#born> ?h .
-    <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#died> ?i .
+    gnd:{gnd} <http://example.org/kg#born> ?h .
+    gnd:{gnd} <http://example.org/kg#died> ?i .
 
     <http://example.org/kg#diedIn> <http://www.w3.org/2000/01/rdf-schema#label> "gestorben in"@de . 
     <http://example.org/kg#diedIn> <http://www.w3.org/2000/01/rdf-schema#label> "died in"@en . 
 
-    <http://d-nb.info/gnd/{gnd}> <http://www.w3.org/2000/01/rdf-schema#label> ?j .
-    <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#cityCluster> ?k .
+    gnd:{gnd} <http://www.w3.org/2000/01/rdf-schema#label> ?j .
+    gnd:{gnd} <http://example.org/kg#cityCluster> ?k .
     ?k <http://www.w3.org/2000/01/rdf-schema#label> ?klabel .
-    ?k <http://xmlns.com/foaf/0.1/depiction> ?k_dbp .
+    ?k <http://xmlns.com/foaf/0.1/depiction> ?kpic .
 
-    <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#profession> ?l .
+    gnd:{gnd} <http://example.org/kg#profession> ?l .
     ?l <http://www.w3.org/2000/01/rdf-schema#label> ?l_label .
-    <http://d-nb.info/gnd/{gnd}> <http://www.w3.org/2000/01/rdf-schema#abstract> ?comment .
+    gnd:{gnd} <http://www.w3.org/2000/01/rdf-schema#abstract> ?comment .
 }}
 WHERE {{ 
     GRAPH <http://d-nb.info/gnd/> {{
         OPTIONAL {{
-            <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
-            ?d <http://d-nb.info/standards/elementset/gnd#preferredNameForThePlaceOrGeographicName> ?e .
+            gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
+            ?d rdfs:label ?e .
         }}
 
         OPTIONAL {{
-            <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#placeOfDeath> ?f .
-            ?f <http://d-nb.info/standards/elementset/gnd#preferredNameForThePlaceOrGeographicName> ?g .
+            gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#placeOfDeath> ?f .
+            ?f rdfs:label ?g .
         }}
 
         OPTIONAL {{
-            <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#dateOfBirth> ?h .
+            gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#dateOfBirth> ?h .
         }}
 
         OPTIONAL {{
-            <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#dateOfDeath> ?i .
+            gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#dateOfDeath> ?i .
         }}
 
         OPTIONAL {{
-            <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson> ?j .
+            gnd:{gnd} rdfs:label ?j .
         }}
 
 
         OPTIONAL {{
-            <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
+            gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
             OPTIONAL {{
-                ?l <http://d-nb.info/standards/elementset/gnd#preferredNameForTheSubjectHeading> ?l_label .
+                ?l rdfs:label ?l_label .
             }}
         }}
 
-        {{ SELECT ?k ?klabel ?kpic ?k_dbp WHERE {{
-            OPTIONAL {{ 
-                <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
-                <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
+        {{ SELECT ?k ?klabel
+           WHERE {{
+               OPTIONAL {{ 
+                    gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
+                    gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
 
-                ?k <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
-                ?k <http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson> ?klabel . 
+                    ?k <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
+                    ?k rdfs:label ?klabel .
 
-                ?k <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
-                ?k <http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson> ?klabel . 
+                    ?k <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
+                    ?k rdfs:label ?klabel .
 
-                # Getting the picture
-                # This will blow up the query too much
-                # OPTIONAL {{
-                #     GRAPH <http://d-nb.info/gnd/> {{
-                #         ?k <http://www.w3.org/2002/07/owl#sameAs> ?k_dbp .
-                #         FILTER(regex(?k_dbp, 'dbpedia'))
-                #     }}
-                #
-                #     GRAPH <http://dbpedia.org/resource/> {{
-                #         ?k_dpb <http://xmlns.com/foaf/0.1/depiction> ?kpic .
-                #     }}
-                # }}
-            }}
+                }}
            }} LIMIT 6
         }}
+
 
     }}
 
     OPTIONAL {{
-        GRAPH <http://d-nb.info/gnd/> {{
-            <http://d-nb.info/gnd/{gnd}> <http://www.w3.org/2002/07/owl#sameAs> ?b .
-        }}
+        ?k foaf:depiction ?kpic .
+    }}
 
-        GRAPH <http://dbpedia.org/resource/> {{
-            ?b <http://xmlns.com/foaf/0.1/depiction> ?c .
+    OPTIONAL {{
+        gnd:{gnd} foaf:depiction ?c .
+    }}
 
-            OPTIONAL {{
-                ?b_german <http://www.w3.org/2002/07/owl#sameAs> ?b .
-                ?b_german <http://www.w3.org/2000/01/rdf-schema#comment> ?comment .
-            }}
-        }}
+    OPTIONAL {{
+        gnd:{gnd} <http://www.w3.org/2000/01/rdf-schema#comment> ?comment .
     }}
 }}
 
