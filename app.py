@@ -29,6 +29,7 @@ CONSTRUCT {{
     ?k <http://xmlns.com/foaf/0.1/depiction> ?k_dbp .
 
     <http://d-nb.info/gnd/{gnd}> <http://example.org/kg#profession> ?l .
+    ?l <http://www.w3.org/2000/01/rdf-schema#label> ?l_label .
     <http://d-nb.info/gnd/{gnd}> <http://www.w3.org/2000/01/rdf-schema#abstract> ?comment .
 }}
 WHERE {{ 
@@ -58,6 +59,9 @@ WHERE {{
 
         OPTIONAL {{
             <http://d-nb.info/gnd/{gnd}> <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
+            OPTIONAL {{
+                ?l <http://d-nb.info/standards/elementset/gnd#preferredNameForTheSubjectHeading> ?l_label .
+            }}
         }}
 
         {{ SELECT ?k ?klabel ?kpic ?k_dbp WHERE {{
