@@ -1,11 +1,13 @@
 # coding: utf-8
 
 from flask import Flask
+from flask.ext.cors import CORS
 import requests
 import json
 
 app = Flask(__name__)
 app.config['SPARQL_ENDPOINT'] = 'http://localhost:18890/sparql'
+cors = CORS(app)
 
 QUERY = """
 
