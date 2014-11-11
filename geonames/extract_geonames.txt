@@ -1,0 +1,17 @@
+This small script extracts RDF files from the geonames dump available at
+
+    http://download.geonames.org/all-geonames-rdf.zip
+
+The script expects an input file with one URI in each line, i.e. a line
+of the input file should look like this:
+
+http://sws.geonames.org/2875601/
+
+These URIs will be extracted from the 10GB file all-geonames-rdf.txt and saved
+to a file like 2875601.rdf
+
+The structure of the all-geonames-rdf.txt is
+
+n      URI
+n+1    RDFXML description for the URI in line n
+
