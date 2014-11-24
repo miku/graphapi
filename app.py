@@ -108,8 +108,10 @@ WHERE {{
 def hello():
     return "Hello World!"
 
+@app.route("/gnd/<lang>/<gnd>")
 @app.route("/gnd/<gnd>")
-def q(gnd):
+def q(gnd, lang='de'):
+    print("Lang: %s" % lang)
     r = requests.get(app.config['SPARQL_ENDPOINT'],
                      headers={'accept': 'application/json'},
                      params={'query': QUERY.format(gnd=gnd)})
