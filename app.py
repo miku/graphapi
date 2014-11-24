@@ -70,27 +70,14 @@ WHERE {{
             }}
         }}
 
-        {{ SELECT ?k ?klabel
-           WHERE {{
-               OPTIONAL {{ 
-                    gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
-                    gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
-
-                    ?k <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?d .
-                    ?k rdfs:label ?klabel .
-
-                    ?k <http://d-nb.info/standards/elementset/gnd#professionOrOccupation> ?l .
-                    ?k rdfs:label ?klabel .
-
-                }}
-           }} LIMIT 6
+        OPTIONAL {{ 
+            gnd:{gnd} <http://d-nb.info/standards/elementset/gnd#acquaintanceshipOrFriendship> ?k .
+            ?k <http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson> ?klabel .
+            # ?k rdfs:label ?klabel .
+            OPTIONAL {{
+                ?k foaf:depiction ?kpic .
+            }}
         }}
-
-
-    }}
-
-    OPTIONAL {{
-        ?k foaf:depiction ?kpic .
     }}
 
     OPTIONAL {{
