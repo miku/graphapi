@@ -48,7 +48,7 @@ def image_cache_link(uri):
         return uri
 
 app = Flask(__name__)
-app.config['SPARQL_ENDPOINT'] = 'http://localhost:18890/sparql'
+app.config['SPARQL_ENDPOINT'] = 'http://localhost:8890/sparql'
 cors = CORS(app)
 
 QUERY = """
