@@ -5,6 +5,48 @@ from flask.ext.cors import CORS
 import requests
 import json
 
+def map_rec_dict(d, f, dict_cond = lambda x: True, key_cond = lambda x: True, process_values = True):
+    '''
+    A simple function that maps a function f recursively over the values
+    of a given dictionary d. If the values of a key happen to be a list, the
+    function f will be mapped over the values of the list. It is assumed that
+    the values of this list are again dictionaries.
+
+    Optionally takes a function dict_cond and key_cond.
+    - values of a sub dictionary are only processed when dict_cond is
+      True (but 'nested' dictionaries will be processed), additionally to the
+      dict itself, the key pointing to the dict is also passed
+    - values will only be processed when key_cond holds
+
+    Returns a new dictionary.
+    '''
+    dp = {}
+    for key, val in d.iteritems():
+        if isinstance(val, dict):
+            if dict_cond(key, val):
+                dp[key] = map_rec_dict(val, f, dict_cond, key_cond, process_values = True)
+            else:
+                dp[key] = map_rec_dict(val, f, dict_cond, key_cond, process_values = False)
+        elif isinstance(val, list):
+            dp[key] = map(
+                          lambda x:
+                              map_rec_dict(x, f, dict_cond, key_cond, process_values = True)
+                              if isinstance(x, dict) and dict_cond(key, x)
+                              else
+                                  map_rec_dict(x, f, dict_cond, key_cond, process_values = False)
+                          ,
+                          val
+                      )
+        else:
+            dp[key] = f(val) if (key_cond(key) and process_values) else val
+    return dp
+
+def image_cache_link(uri):
+    if uri[-4:] in ['.jpg', '.png']:
+        return "http://172.18.113.6:5001/u?url=%s" % uri
+    else:
+        return uri
+
 app = Flask(__name__)
 app.config['SPARQL_ENDPOINT'] = 'http://localhost:18890/sparql'
 cors = CORS(app)
@@ -98,14 +140,20 @@ def hello():
 @app.route("/gnd/<lang>/<gnd>")
 @app.route("/gnd/<gnd>")
 def q(gnd, lang='de'):
-    print("Lang: %s" % lang)
     r = requests.get(app.config['SPARQL_ENDPOINT'],
                      headers={'accept': 'application/json'},
                      params={'query': QUERY.format(gnd=gnd)})
-    #j = json.loads(r.text)
+    j = json.loads(r.text)
+    j = map_rec_dict(
+            j,
+            image_cache_link,
+            lambda k, d : 'type' in d and d['type'] == 'uri',
+            lambda x : x == 'value'
+        )
+
     #print("%s" % j)
     #return "<pre>%s</pre>" % r.text
-    return r.text
+    return json.dumps(j, sort_keys=True, indent=4)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
