@@ -4,6 +4,7 @@ from flask import Flask
 from flask.ext.cors import CORS
 import requests
 import json
+import pyphen
 
 def extend(d1, d2):
     '''
@@ -13,6 +14,25 @@ def extend(d1, d2):
     for k, i in d2.iteritems():
         d1[k] = i
     return d1
+
+def hyphenate(text, lang='de'):
+    # cf.: https://github.com/Kozea/Pyphen/tree/master/dictionaries
+    lcodes = {
+        'de' : 'de_DE' ,
+        'en' : 'en_GB'
+    }
+    dic = pyphen.Pyphen(lang=lcodes[lang])
+
+    hwords = []
+    for word in text.split(" "):
+        syl = []
+        # slight work-around concercing already hyphenated words
+        for parts in word.split("-"):
+            h = dic.inserted(parts)
+            h = h.replace('-', '&sha;')
+            syl.append(h)
+        hwords.append('-'.join(syl))
+    return ' '.join(hwords)
 
 def get_aux_json(lang = 'de'):
     try:
@@ -164,6 +184,12 @@ def q(gnd, lang='de'):
             j,
             image_cache_link,
             lambda k, d : 'type' in d and d['type'] == 'uri',
+            lambda x : x == 'value'
+        )
+    j = map_rec_dict(
+            j,
+            lambda x: hyphenate(x),
+            lambda k, d : k == 'http://www.w3.org/2000/01/rdf-schema#abstract',
             lambda x : x == 'value'
         )
 
