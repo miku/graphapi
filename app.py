@@ -5,6 +5,24 @@ from flask.ext.cors import CORS
 import requests
 import json
 
+def extend(d1, d2):
+    '''
+    Simple extension of d1 with d2. It's assumed that d1 and d2 have disjoint
+    keys. Otherwise, a more elaborate function would be needed.
+    '''
+    for k, i in d2.iteritems():
+        d1[k] = i
+    return d1
+
+def get_aux_json(lang = 'de'):
+    try:
+        f = open('i18n-%s.json' % lang, 'r')
+    except:
+        f = open('i18n-de.json', 'r')
+    data = json.load(f)
+    f.close()
+    return data
+
 def map_rec_dict(d, f, dict_cond = lambda x: True, key_cond = lambda x: True, process_values = True):
     '''
     A simple function that maps a function f recursively over the values
@@ -58,25 +76,23 @@ DEFINE input:inference <gndrules>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
 PREFIX gnd: <http://d-nb.info/gnd/>
+PREFIX kgl: <http://kg.ub.uni-leipzig.de/>
 
 CONSTRUCT {{ 
+    gnd:{gnd} <http://www.w3.org/2000/01/rdf-schema#label> ?j .
     gnd:{gnd} <http://xmlns.com/foaf/0.1/depiction> ?c .
 
-    gnd:{gnd} <http://example.org/kg#bornIn> ?e .
-    gnd:{gnd} <http://example.org/kg#diedIn> ?g .
+    gnd:{gnd} kgl:born ?h .
+    gnd:{gnd} kgl:bornIn ?e .
 
-    gnd:{gnd} <http://example.org/kg#born> ?h .
-    gnd:{gnd} <http://example.org/kg#died> ?i .
+    gnd:{gnd} kgl:died ?i .
+    gnd:{gnd} kgl:diedIn ?g .
 
-    <http://example.org/kg#diedIn> <http://www.w3.org/2000/01/rdf-schema#label> "gestorben in"@de . 
-    <http://example.org/kg#diedIn> <http://www.w3.org/2000/01/rdf-schema#label> "died in"@en . 
-
-    gnd:{gnd} <http://www.w3.org/2000/01/rdf-schema#label> ?j .
-    gnd:{gnd} <http://example.org/kg#cityCluster> ?k .
+    gnd:{gnd} kgl:cityCluster ?k .
     ?k <http://www.w3.org/2000/01/rdf-schema#label> ?klabel .
     ?k <http://xmlns.com/foaf/0.1/depiction> ?kpic .
 
-    gnd:{gnd} <http://example.org/kg#profession> ?l .
+    gnd:{gnd} kgl:profession ?l .
     ?l <http://www.w3.org/2000/01/rdf-schema#label> ?l_label .
     gnd:{gnd} <http://www.w3.org/2000/01/rdf-schema#abstract> ?comment .
 }}
@@ -150,6 +166,9 @@ def q(gnd, lang='de'):
             lambda k, d : 'type' in d and d['type'] == 'uri',
             lambda x : x == 'value'
         )
+
+    ja = get_aux_json(lang)
+    j = extend(j, ja)
 
     #print("%s" % j)
     #return "<pre>%s</pre>" % r.text

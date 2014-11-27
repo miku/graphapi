@@ -1,0 +1,50 @@
+{
+    "http://kb.ub.uni-leipzig.de/born": {
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+            {
+                "type": "literal", 
+                "value": "Geboren"
+            } 
+        ]
+    },
+    "http://kb.ub.uni-leipzig.de/died": {
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+            {
+                "type": "literal", 
+                "value": "Gestorben"
+            } 
+        ]
+    },
+    "http://kg.ub.uni-leipzig.de/diedIn": {
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+            {
+                "type": "literal", 
+                "value": "Gestorben in"
+            } 
+        ]
+    },
+    "http://kg.ub.uni-leipzig.de/bornIn": {
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+            {
+                "type": "literal", 
+                "value": "Geboren in"
+            } 
+        ]
+    },
+    "http://kg.ub.uni-leipzig.de/profession": {
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+            {
+                "type": "literal", 
+                "value": "Profession"
+            } 
+        ]
+    },
+    "http://www.w3.org/2000/01/rdf-schema#abstract": {
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+            {
+                "type": "literal", 
+                "value": "Kurz & knapp"
+            } 
+        ]
+    }
+}
