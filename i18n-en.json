@@ -1,5 +1,5 @@
 {
-    "http://kb.ub.uni-leipzig.de/born": {
+    "http://kg.ub.uni-leipzig.de/born": {
         "http://www.w3.org/2000/01/rdf-schema#label": [
             {
                 "type": "literal", 
@@ -7,7 +7,7 @@
             } 
         ]
     },
-    "http://kb.ub.uni-leipzig.de/died": {
+    "http://kg.ub.uni-leipzig.de/died": {
         "http://www.w3.org/2000/01/rdf-schema#label": [
             {
                 "type": "literal", 
