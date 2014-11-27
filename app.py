@@ -5,15 +5,6 @@ from flask.ext.cors import CORS
 import requests
 import json
 
-def extend(d1, d2):
-    '''
-    Simple extension of d1 with d2. It's assumed that d1 and d2 have disjoint
-    keys. Otherwise, a more elaborate function would be needed.
-    '''
-    for k, i in d2.iteritems():
-        d1[k] = i
-    return d1
-
 def get_aux_json(lang = 'de'):
     try:
         f = open('i18n-%s.json' % lang, 'r')
@@ -168,7 +159,7 @@ def q(gnd, lang='de'):
         )
 
     ja = get_aux_json(lang)
-    j = extend(j, ja)
+    j.update(ja)
 
     #print("%s" % j)
     #return "<pre>%s</pre>" % r.text
