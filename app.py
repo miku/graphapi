@@ -20,7 +20,7 @@ def hyphenate(text, lang='de'):
         # slight work-around concercing already hyphenated words
         for parts in word.split("-"):
             h = dic.inserted(parts)
-            h = h.replace('-', '&shy;')
+            h = h.replace('-', '&#173;')
             syl.append(h)
         hwords.append('-'.join(syl))
     return ' '.join(hwords)
