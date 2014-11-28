@@ -71,8 +71,8 @@ def map_rec_dict(d, f, dict_cond = lambda x: True, key_cond = lambda x: True, pr
     return dp
 
 def image_cache_link(uri):
-    if uri[-4:] in ['.jpg', '.png']:
-        return "http://172.18.113.6:5001/u?url=%s" % uri
+    if uri[-4:].lower() in ['.jpg', '.png']:
+        return uri.replace("http://upload.wikimedia.org", "https://alpha.finc.info/knowledgegraph-images")
     else:
         return uri
 
