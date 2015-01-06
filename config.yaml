@@ -1,0 +1,5 @@
+endpoint : http://localhost:18890/sparql
+prefixes:
+    gnd: http://d-nb.info/gnd/
+    gndo: http://d-nb.info/standards/elementset/gnd#
+    foaf: http://xmlns.com/foaf/0.1/

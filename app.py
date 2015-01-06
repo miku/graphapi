@@ -1,10 +1,12 @@
 # coding: utf-8
 
-from flask import Flask
+from flask import Flask, Response, stream_with_context
 from flask.ext.cors import CORS
+from time import sleep
 import requests
 import json
 import pyphen
+import kg
 
 def hyphenate(text, lang='de'):
     # cf.: https://github.com/Kozea/Pyphen/tree/master/dictionaries
@@ -77,12 +79,12 @@ def image_cache_link(uri):
         return uri
 
 app = Flask(__name__)
-app.config['SPARQL_ENDPOINT'] = 'http://localhost:8890/sparql'
+app.config['SPARQL_ENDPOINT'] = 'http://localhost:18890/sparql'
 cors = CORS(app)
 
 QUERY = """
 DEFINE input:same-as "yes"
-DEFINE input:inference <gndrules>
+#DEFINE input:inference <gndrules>
 
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
@@ -163,6 +165,20 @@ WHERE {{
 @app.route("/")
 def hello():
     return "Hello World!"
+
+@app.route('/stream/<gnd>')
+def streamed_response(gnd):
+    def generate():
+        gnduri = kg.get_gnd_uri(gnd)
+        for p in kg.props:
+            t = kg.fill_triple(s = gnduri, p = p)
+            tstr = t.__str__().encode('utf-8')
+            yield ("data: %s\n\n" % tstr).encode('utf-8')
+            print "Sending data: %s" % tstr
+            sleep(0.1)
+        # Workaround to close the stream in the JavaScript part
+        yield ("data: END\n\n").encode('utf-8');
+    return Response(generate(), content_type='text/event-stream')
 
 @app.route("/gnd/<lang>/<gnd>")
 @app.route("/gnd/<gnd>")
